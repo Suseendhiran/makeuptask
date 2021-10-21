@@ -14,7 +14,7 @@ container.innerHTML = `
         <form class="searchContainer row" id="filterData">
             <div class="col-12 col-md-6">
             <input
-                placeholder="Enter brand name"
+                placeholder="Brand Name ex:Pure Anada,green people etc..,"
                 oninput="handleFilterChange()"
                 class="searchInput"
                 id="brandName"
@@ -23,7 +23,7 @@ container.innerHTML = `
             </div>
             <div class="col-12 col-md-6">
             <input
-                placeholder="Enter product type"
+                placeholder="Product Type ex:Nail Polish,Lip liner etc..,"
                 oninput="handleFilterChange()"
                 class="searchInput"
                 id="productType"
@@ -37,25 +37,33 @@ container.innerHTML = `
         <p id="noItems">No items found!!</p>
         <div class="spinnerWrapper">
             <div class="loader"></div>
-            <p>Fetching your products</p>
+            <p>Fetching your products...</p>
         </div>`;
 
 container.appendChild(row);
 row.setAttribute("class", "row");
 
 //get required elements
-let brandName = document.getElementById("brandName");
-let prodType = document.getElementById("productType");
+let brandNameInput = document.getElementById("brandName");
+let prodTypeInput = document.getElementById("productType");
 let spinner = document.querySelector(".spinnerWrapper");
 let noItemsPara = document.getElementById("noItems");
 let brandsWrapper = document.getElementById("brandsWrapper");
 
+function queryParamFormat(word) {
+  let formattedWord = word
+    .split(" ")
+    .map((item) => item.toLowerCase())
+    .join("_");
+  return formattedWord;
+}
+
 //handling filter whenever user typing in filter fields
 function handleFilterChange() {
   let filterButton = document.getElementById("filterSubmit");
-  if (brandName.value || prodType.value) {
+  if (brandNameInput.value || prodTypeInput.value) {
     filterButton.classList.remove("disabled");
-  } else if (!brandName.value || !prodType.value || filterAddedOnce) {
+  } else if (!brandNameInput.value || !prodTypeInput.value || filterAddedOnce) {
     getItems("", "");
     filterButton.classList.add("disabled");
     row.innerHTML = "";
@@ -64,7 +72,10 @@ function handleFilterChange() {
 
 //while clicking Apply filter button
 function handleApplyFilter() {
-  getItems(brandName.value.toLowerCase(), prodType.value.toLowerCase());
+  getItems(
+    brandNameInput.value.toLowerCase(),
+    queryParamFormat(prodTypeInput.value)
+  );
   spinner.style.display = "flex";
   noItemsPara.style.display = "none";
   row.innerHTML = "";
@@ -74,6 +85,8 @@ function handleApplyFilter() {
 //handling data Once data successfully fetched
 function handleSuccess(makeupProds) {
   spinner.style.display = "none";
+  brandNameInput.removeAttribute("disabled");
+  prodTypeInput.removeAttribute("disabled");
   let productsBrands = makeupProds.map((item) => item.brand);
   brandNames = productsBrands
     .filter((item, i) => productsBrands.indexOf(item) === i)
@@ -106,7 +119,9 @@ function handleSuccess(makeupProds) {
             />
             <div class="details">
                 <div class="brandName"><span>Brand</span> : ${item.brand}</div>
-                <div><span>Name</span> : ${item.name}</div>
+                <div class="brandName"><span>Name</span> : ${item.name} ${
+      item.product_type ? `(${item.product_type.split("_").join(" ")})` : ""
+    }</div>
                 <div><span>Price</span> : ${
                   item.price_sign ? item.price_sign : "$"
                 } ${item.price}</div>
@@ -124,12 +139,14 @@ async function getItems(brandName, prodType) {
   console.log(spinner);
   spinner.style.display = "flex";
   noItemsPara.style.display = "none";
+  brandNameInput.setAttribute("disabled", "true");
+  prodTypeInput.setAttribute("disabled", true);
   console.log("");
   await fetch(
     `https://makeup-api.herokuapp.com/api/v1/products.json${
       brandName ? "?brand=" + brandName : "?brand="
     }${prodType ? "&product_type=" + prodType : ""}`
-    //`http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`,
+    //`http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`
   )
     .then((data) => data.json())
     .then((makeupProds) => {
