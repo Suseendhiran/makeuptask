@@ -129,7 +129,7 @@ async function getItems(brandName, prodType) {
     // `http://makeup-api.herokuapp.com/api/v1/products.json${
     //   brandName ? "?brand=" + brandName : "?brand="
     // }${prodType ? "&product_type=" + prodType : ""}`,
-    `http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`,
+    `http://makeup-api.herokuapp.com/api/v1/products.json`,
     {
       method: "GET",
       //mode: "same-origin",
