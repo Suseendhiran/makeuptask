@@ -128,4 +128,8 @@ body {
   .details > div {
     margin-top: 5px;
   }
+  .buttonsWrapper {
+    flex-direction: column;
+    width: auto;
+  }
 }

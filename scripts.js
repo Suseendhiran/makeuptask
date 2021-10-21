@@ -53,6 +53,7 @@ let brandsWrapper = document.getElementById("brandsWrapper");
 let filterButton = document.getElementById("filterSubmit");
 let clearFilterButton = document.getElementById("clearFilter");
 
+//For chnaging the queryparams format
 function queryParamFormat(word) {
   let formattedWord = word
     .split(" ")
@@ -64,9 +65,11 @@ function queryParamFormat(word) {
 //handling filter whenever user typing in filter fields
 function handleFilterChange() {
   if (brandNameInput.value || prodTypeInput.value) {
+    //if value present, enabling buttons
     filterButton.classList.remove("disabled");
     clearFilterButton.classList.remove("disabled");
   } else if (!brandNameInput.value || !prodTypeInput.value) {
+    //if value not present, disabling buttons
     //getItems("", "");
     filterButton.classList.add("disabled");
     clearFilterButton.classList.add("disabled");
@@ -86,7 +89,7 @@ function handleApplyFilter() {
   filterAdded = true;
 }
 
-//Clearing filter
+//Clearing filter values
 function handleClearFilter() {
   brandNameInput.value = "";
   prodTypeInput.value = "";
@@ -94,6 +97,7 @@ function handleClearFilter() {
   clearFilterButton.classList.add("disabled");
   filterButton.classList.add("disabled");
   if (filterAdded) {
+    //if filters were present while clearing filters, will call fetch all items once
     row.innerHTML = "";
     getItems();
     filterAdded = false;
@@ -102,8 +106,8 @@ function handleClearFilter() {
 
 //handling data Once data successfully fetched
 function handleSuccess(makeupProds) {
-  spinner.style.display = "none";
-  brandNameInput.removeAttribute("disabled");
+  spinner.style.display = "none"; //hiding spinner after successfull fetch
+  brandNameInput.removeAttribute("disabled"); //enabling filter inputs once data sucessfully fetched
   prodTypeInput.removeAttribute("disabled");
   let productsBrands = makeupProds.map((item) => item.brand);
   brandNames = productsBrands
@@ -113,7 +117,7 @@ function handleSuccess(makeupProds) {
 
   console.log(makeupProds, Array.isArray(makeupProds), makeupProds.length);
   if (!makeupProds.length) {
-    noItemsPara.style.display = "block";
+    noItemsPara.style.display = "block"; // if no products found, Display noitems found text
     return;
   }
   row.innerHTML = "";
@@ -122,7 +126,7 @@ function handleSuccess(makeupProds) {
     let truncatedDescription =
       item.description.length > 400
         ? `${item.description.substring(0, 400)}...`
-        : item.description;
+        : item.description; //trauncate description if description length is more than 400
     row.innerHTML += `
     <div class="col-12">
         <a class="prodContainer" target="_blank" href=${item.product_link}>
@@ -155,9 +159,9 @@ async function getItems(brandName, prodType) {
   console.log("prods", brandName, prodType);
 
   console.log(spinner);
-  spinner.style.display = "flex";
-  noItemsPara.style.display = "none";
-  brandNameInput.setAttribute("disabled", "true");
+  spinner.style.display = "flex"; // display spinner while data fetching
+  noItemsPara.style.display = "none"; // hiding no items found para while fetching
+  brandNameInput.setAttribute("disabled", "true"); //disabling filter inputs while fetching data
   prodTypeInput.setAttribute("disabled", true);
   console.log("");
   await fetch(
@@ -174,8 +178,8 @@ async function getItems(brandName, prodType) {
       console.log("fetcherr", err);
       if (err.message === "Failed to fetch") {
         noItemsPara.style.display = "block";
-        spinner.style.display = "none";
-        noItemsPara.innerText = `${err.message} :(`;
+        spinner.style.display = "none"; // hide spinner after fetch
+        noItemsPara.innerText = `${err.message} :(`; //display Fetch failed msg while getting error
       }
       console.log(err);
     });
