@@ -135,7 +135,7 @@ async function getItems(brandName, prodType) {
       mode: "cors",
       cache: "no-cache",
       //headers: { "Content-Type": "application/json" },
-      referrerPolicy: "no-referrer",
+      referrerPolicy: "origin-when-cross-origin",
     }
   )
     .then((data) => data.json())
