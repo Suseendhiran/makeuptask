@@ -3,7 +3,7 @@ let row = document.createElement("div");
 let brandNames = [];
 let productTypes = [];
 
-let filterAddedOnce = false; //variable will be switched to true if user tried filter once
+let filterAdded = false; //variable will be switched to true if user tried filter once
 
 document.body.appendChild(container);
 container.setAttribute("class", "container");
@@ -30,9 +30,10 @@ container.innerHTML = `
                 value=""
             />
             </div>
-           
-            <a class="waves-effect waves-light btn disabled" id="filterSubmit" onclick="handleApplyFilter()"><i class="material-icons left">filter_list</i>Apply filter</a>
-            
+            <div class="buttonsWrapper">
+                <a class="waves-effect waves-light btn disabled" id="filterSubmit" onclick="handleApplyFilter()"><i class="material-icons left">filter_list</i>Apply filter</a>
+                <a class="waves-effect waves-light btn disabled" id="clearFilter" onclick="handleClearFilter()"><i class="material-icons left">clear_all</i>Clear filter</a>
+            </div>
         </form>
         <p id="noItems">No items found!!</p>
         <div class="spinnerWrapper">
@@ -49,6 +50,8 @@ let prodTypeInput = document.getElementById("productType");
 let spinner = document.querySelector(".spinnerWrapper");
 let noItemsPara = document.getElementById("noItems");
 let brandsWrapper = document.getElementById("brandsWrapper");
+let filterButton = document.getElementById("filterSubmit");
+let clearFilterButton = document.getElementById("clearFilter");
 
 function queryParamFormat(word) {
   let formattedWord = word
@@ -60,12 +63,13 @@ function queryParamFormat(word) {
 
 //handling filter whenever user typing in filter fields
 function handleFilterChange() {
-  let filterButton = document.getElementById("filterSubmit");
   if (brandNameInput.value || prodTypeInput.value) {
     filterButton.classList.remove("disabled");
-  } else if (!brandNameInput.value || !prodTypeInput.value || filterAddedOnce) {
-    getItems("", "");
+    clearFilterButton.classList.remove("disabled");
+  } else if (!brandNameInput.value || !prodTypeInput.value) {
+    //getItems("", "");
     filterButton.classList.add("disabled");
+    clearFilterButton.classList.add("disabled");
     row.innerHTML = "";
   }
 }
@@ -79,7 +83,21 @@ function handleApplyFilter() {
   spinner.style.display = "flex";
   noItemsPara.style.display = "none";
   row.innerHTML = "";
-  filterAddedOnce = true;
+  filterAdded = true;
+}
+
+//Clearing filter
+function handleClearFilter() {
+  brandNameInput.value = "";
+  prodTypeInput.value = "";
+  console.log(filterAdded);
+  clearFilterButton.classList.add("disabled");
+  filterButton.classList.add("disabled");
+  if (filterAdded) {
+    row.innerHTML = "";
+    getItems();
+    filterAdded = false;
+  }
 }
 
 //handling data Once data successfully fetched
