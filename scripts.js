@@ -126,7 +126,7 @@ async function getItems(brandName, prodType) {
   noItemsPara.style.display = "none";
   console.log("");
   await fetch(
-    `http://makeup-api.herokuapp.com/api/v1/products.json${
+    `https://makeup-api.herokuapp.com/api/v1/products.json${
       brandName ? "?brand=" + brandName : "?brand="
     }${prodType ? "&product_type=" + prodType : ""}`,
     //`https://makeup-api.herokuapp.com/api/v1/products.json`,
