@@ -3,10 +3,12 @@ let row = document.createElement("div");
 let brandNames = [];
 let productTypes = [];
 
-let filterAddedOnce = false;
+let filterAddedOnce = false; //variable will be switched to true if user tried filter once
 
 document.body.appendChild(container);
 container.setAttribute("class", "container");
+
+// Elements for heading and filter form
 container.innerHTML = `
         <h1 class="heading">Find Your Makeup Products</h1>
         <form class="searchContainer row" id="filterData">
@@ -29,7 +31,7 @@ container.innerHTML = `
             />
             </div>
            
-            <a class="waves-effect waves-light btn disabled" id="filterSubmit" onclick="handleFilter()"><i class="material-icons left">filter_list</i>Apply filter</a>
+            <a class="waves-effect waves-light btn disabled" id="filterSubmit" onclick="handleApplyFilter()"><i class="material-icons left">filter_list</i>Apply filter</a>
             
         </form>
         <p id="noItems">No items found!!</p>
@@ -41,15 +43,14 @@ container.innerHTML = `
 container.appendChild(row);
 row.setAttribute("class", "row");
 
+//get required elements
 let brandName = document.getElementById("brandName");
 let prodType = document.getElementById("productType");
 let spinner = document.querySelector(".spinnerWrapper");
 let noItemsPara = document.getElementById("noItems");
-let filterForm = document.getElementById("filterData");
 let brandsWrapper = document.getElementById("brandsWrapper");
 
-//filterForm.addEventListener("submit", handleFilter);
-
+//handling filter whenever user typing in filter fields
 function handleFilterChange() {
   let filterButton = document.getElementById("filterSubmit");
   if (brandName.value || prodType.value) {
@@ -61,11 +62,8 @@ function handleFilterChange() {
   }
 }
 
-function handleFilter() {
-  //   if (!brandName.value || !prodType.value) {
-  //     alert("Please enter some filter values");
-  //     return;
-  //   }
+//while clicking Apply filter button
+function handleApplyFilter() {
   getItems(brandName.value.toLowerCase(), prodType.value.toLowerCase());
   spinner.style.display = "flex";
   noItemsPara.style.display = "none";
@@ -73,6 +71,7 @@ function handleFilter() {
   filterAddedOnce = true;
 }
 
+//handling data Once data successfully fetched
 function handleSuccess(makeupProds) {
   spinner.style.display = "none";
   let productsBrands = makeupProds.map((item) => item.brand);
@@ -118,6 +117,7 @@ function handleSuccess(makeupProds) {
   });
 }
 
+//Fetching data
 async function getItems(brandName, prodType) {
   console.log("prods", brandName, prodType);
 
@@ -128,15 +128,8 @@ async function getItems(brandName, prodType) {
   await fetch(
     `https://makeup-api.herokuapp.com/api/v1/products.json${
       brandName ? "?brand=" + brandName : "?brand="
-    }${prodType ? "&product_type=" + prodType : ""}`,
-    //`https://makeup-api.herokuapp.com/api/v1/products.json`,
-    {
-      method: "GET",
-      //mode: "same-origin",
-      //cache: "no-cache",
-      //headers: { "Content-Type": "application/json" },
-      //referrerPolicy: "unsafe-url",
-    }
+    }${prodType ? "&product_type=" + prodType : ""}`
+    //`http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`,
   )
     .then((data) => data.json())
     .then((makeupProds) => {
@@ -152,4 +145,5 @@ async function getItems(brandName, prodType) {
       console.log(err);
     });
 }
+//calling fetch productsas
 getItems();
