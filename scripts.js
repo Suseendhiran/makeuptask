@@ -131,7 +131,8 @@ async function getItems(brandName, prodType) {
     // }${prodType ? "&product_type=" + prodType : ""}`
     `http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`,
     {
-      headers: { "Content-Type": "application/json" },
+      method: "GET",
+      //   headers: { "Content-Type": "application/json" },
     }
   )
     .then((data) => data.json())
