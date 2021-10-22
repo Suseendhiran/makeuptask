@@ -67,6 +67,11 @@ body {
   margin-top: 10px;
   flex-wrap: wrap;
 }
+.productTypesWrapper {
+  display: none;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
 .brandAndProds {
   background-color: #ecd1e8;
   border: 0;
