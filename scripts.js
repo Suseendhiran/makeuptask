@@ -1,7 +1,7 @@
 let container = document.createElement("div");
 let row = document.createElement("div");
 let brandNames = [];
-let productTypes = [];
+let productTypesNames = [];
 
 let filterAdded = false; //variable will be switched to true if user tried filter once
 
@@ -35,12 +35,11 @@ container.innerHTML = `
                 <a class="waves-effect waves-light btn disabled" id="clearFilter" onclick="handleClearFilter()"><i class="material-icons left">clear_all</i>Clear filter</a>
             </div>
         </form>
+        <div class="availabilitiesWrapper">
         <button class="availabilities"  id="availableBrands" onclick="handleAvailableBrands()">See Available brands</button>
-        <div class="brandsWrapper" style="display:none">
-          <div class="brand">sss</div>
-          <div class="brand">ssssss</div>
-          <div class="brand">sss</div>
-          <div class="brand">ssssss</div>
+          <div class="brandsWrapper" style="display:none"></div>
+        <button class="availabilities"  id="availableProducts" onclick="handleAvailableProducts()">See Available Products</button>
+          <div class="productTypesWrapper" style="display:none"></div>
         </div>
         <p id="noItems">No items found!!</p>
         <div class="spinnerWrapper">
@@ -58,6 +57,8 @@ let spinner = document.querySelector(".spinnerWrapper");
 let noItemsPara = document.getElementById("noItems");
 let brandsWrapper = document.querySelector(".brandsWrapper");
 let availableBrands = document.getElementById("availableBrands");
+let productTypesWrapper = document.querySelector(".productTypesWrapper");
+let availableProductsTypes = document.getElementById("availableProducts");
 let filterButton = document.getElementById("filterSubmit");
 let clearFilterButton = document.getElementById("clearFilter");
 
@@ -96,6 +97,10 @@ function handleApplyFilter() {
   noItemsPara.style.display = "none";
   row.innerHTML = "";
   filterAdded = true;
+  // brandsWrapper.style.display = "none";
+  // productTypesWrapper.style.display = "none";
+  // handleAvailableBrands();
+  // handleAvailableProducts();
 }
 
 //Clearing filter values
@@ -121,7 +126,7 @@ const handleAvailableBrands = () => {
     availableBrands.innerText = "Hide Available Brands ";
     brandNames.forEach((item, index) => {
       let test = item;
-      brandsWrapper.innerHTML += `<div class="brand" id=brand${index} onclick="setBrand(${index})">${item}</div>`;
+      brandsWrapper.innerHTML += `<div class="brandAndProds" id=brand${index} onclick="setBrandFilter(${index})">${item}</div>`;
     });
   } else {
     brandsWrapper.style.display = "none";
@@ -131,10 +136,36 @@ const handleAvailableBrands = () => {
   //document.querySelector(".availabilities").innerText = "Hide Available Brands";
 };
 
+//Showing available products
+const handleAvailableProducts = () => {
+  console.log("mm", availableProductsTypes, productTypesWrapper);
+  if (productTypesWrapper.style.display === "none") {
+    productTypesWrapper.style.display = "flex";
+    availableProductsTypes.innerText = "Hide Available Products ";
+    productTypesNames.forEach((item, index) => {
+      productTypesWrapper.innerHTML += `<div class="brandAndProds" id=product${index} onclick="setProductFilter(${index})">${item}</div>`;
+    });
+  } else {
+    productTypesWrapper.style.display = "none";
+    availableProductsTypes.innerText = "See Available Products ";
+  }
+
+  //document.querySelector(".availabilities").innerText = "Hide Available Brands";
+};
+
 //adding selected brand to filter brand input
-const setBrand = (index) => {
+const setBrandFilter = (index) => {
   let name = document.getElementById(`brand${index}`).innerText;
   brandNameInput.value = name;
+  handleFilterChange();
+};
+
+//adding selected product to filter product type input
+const setProductFilter = (index) => {
+  console.log(index);
+  let name = document.getElementById(`product${index}`).innerText;
+
+  prodTypeInput.value = name;
   handleFilterChange();
 };
 
@@ -143,14 +174,21 @@ function handleSuccess(makeupProds) {
   spinner.style.display = "none"; //hiding spinner after successfull fetch
   brandNameInput.removeAttribute("disabled"); //enabling filter inputs once data sucessfully fetched
   prodTypeInput.removeAttribute("disabled");
+  console.log(makeupProds);
   let productsBrands = makeupProds.map((item) => item.brand);
+  let productsTypes = makeupProds.map((item) =>
+    item.product_type.split("_").join(" ")
+  );
   if (!filterAdded) {
     brandNames = productsBrands
       .filter((item, i) => productsBrands.indexOf(item) === i)
       .sort();
+    productTypesNames = productsTypes
+      .filter((item, i) => productsTypes.indexOf(item) === i)
+      .sort();
   }
 
-  console.log("brandnames", brandNames);
+  console.log("brandnames", brandNames, productTypesNames);
 
   console.log(makeupProds, Array.isArray(makeupProds), makeupProds.length);
   if (!makeupProds.length) {
