@@ -30,11 +30,18 @@ container.innerHTML = `
                 value=""
             />
             </div>
-            <div class="buttonsWrapper">
+            <div class="buttonsWrapper" >
                 <a class="waves-effect waves-light btn disabled" id="filterSubmit" onclick="handleApplyFilter()"><i class="material-icons left">filter_list</i>Apply filter</a>
                 <a class="waves-effect waves-light btn disabled" id="clearFilter" onclick="handleClearFilter()"><i class="material-icons left">clear_all</i>Clear filter</a>
             </div>
         </form>
+        <button class="availabilities"  id="availableBrands" onclick="handleAvailableBrands()">See Available brands</button>
+        <div class="brandsWrapper" style="display:none">
+          <div class="brand">sss</div>
+          <div class="brand">ssssss</div>
+          <div class="brand">sss</div>
+          <div class="brand">ssssss</div>
+        </div>
         <p id="noItems">No items found!!</p>
         <div class="spinnerWrapper">
             <div class="loader"></div>
@@ -49,10 +56,12 @@ let brandNameInput = document.getElementById("brandName");
 let prodTypeInput = document.getElementById("productType");
 let spinner = document.querySelector(".spinnerWrapper");
 let noItemsPara = document.getElementById("noItems");
-let brandsWrapper = document.getElementById("brandsWrapper");
+let brandsWrapper = document.querySelector(".brandsWrapper");
+let availableBrands = document.getElementById("availableBrands");
 let filterButton = document.getElementById("filterSubmit");
 let clearFilterButton = document.getElementById("clearFilter");
 
+console.log(availableBrands, brandsWrapper.style);
 //For chnaging the queryparams format
 function queryParamFormat(word) {
   let formattedWord = word
@@ -68,12 +77,12 @@ function handleFilterChange() {
     //if value present, enabling buttons
     filterButton.classList.remove("disabled");
     clearFilterButton.classList.remove("disabled");
-  } else if (!brandNameInput.value || !prodTypeInput.value) {
+  } else if (!brandNameInput.value || !prodTypeInput.value || filterAdded) {
     //if value not present, disabling buttons
     //getItems("", "");
     filterButton.classList.add("disabled");
     clearFilterButton.classList.add("disabled");
-    row.innerHTML = "";
+    //row.innerHTML = "";
   }
 }
 
@@ -104,15 +113,43 @@ function handleClearFilter() {
   }
 }
 
+//Showing available brands
+const handleAvailableBrands = () => {
+  console.log("mm", availableBrands, brandsWrapper);
+  if (brandsWrapper.style.display === "none") {
+    brandsWrapper.style.display = "flex";
+    availableBrands.innerText = "Hide Available Brands ";
+    brandNames.forEach((item, index) => {
+      let test = item;
+      brandsWrapper.innerHTML += `<div class="brand" id=brand${index} onclick="setBrand(${index})">${item}</div>`;
+    });
+  } else {
+    brandsWrapper.style.display = "none";
+    availableBrands.innerText = "See Available Brands ";
+  }
+
+  //document.querySelector(".availabilities").innerText = "Hide Available Brands";
+};
+
+//adding selected brand to filter brand input
+const setBrand = (index) => {
+  let name = document.getElementById(`brand${index}`).innerText;
+  brandNameInput.value = name;
+  handleFilterChange();
+};
+
 //handling data Once data successfully fetched
 function handleSuccess(makeupProds) {
   spinner.style.display = "none"; //hiding spinner after successfull fetch
   brandNameInput.removeAttribute("disabled"); //enabling filter inputs once data sucessfully fetched
   prodTypeInput.removeAttribute("disabled");
   let productsBrands = makeupProds.map((item) => item.brand);
-  brandNames = productsBrands
-    .filter((item, i) => productsBrands.indexOf(item) === i)
-    .sort();
+  if (!filterAdded) {
+    brandNames = productsBrands
+      .filter((item, i) => productsBrands.indexOf(item) === i)
+      .sort();
+  }
+
   console.log("brandnames", brandNames);
 
   console.log(makeupProds, Array.isArray(makeupProds), makeupProds.length);
@@ -168,7 +205,7 @@ async function getItems(brandName, prodType) {
     `https://makeup-api.herokuapp.com/api/v1/products.json${
       brandName ? "?brand=" + brandName : "?brand="
     }${prodType ? "&product_type=" + prodType : ""}`
-    //`http://makeup-api.herokuapp.com/api/v1/products.json?brand=covergirl&product_type=lipstick`
+    //`http://makeup-api.herokuapp.com/api/v1/products.json?brand=&product_type=lipstick`
   )
     .then((data) => data.json())
     .then((makeupProds) => {
