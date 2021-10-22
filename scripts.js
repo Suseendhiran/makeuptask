@@ -61,8 +61,24 @@ let productTypesWrapper = document.querySelector(".productTypesWrapper");
 let availableProductsTypes = document.getElementById("availableProducts");
 let filterButton = document.getElementById("filterSubmit");
 let clearFilterButton = document.getElementById("clearFilter");
+let filterInputs = document.getElementsByClassName("searchInput");
 
-console.log(availableBrands, brandsWrapper.style);
+console.log(filterInputs);
+Array.from(filterInputs).forEach((item) => {
+  console.log("l", item);
+  item.addEventListener("keyup", function (e) {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      document.getElementById("filterSubmit").click();
+    }
+  });
+});
+for (let i = 0; i < filterInputs.length; i++) {
+  console.log(filterInputs[i]);
+}
+
+//
+
 //For chnaging the queryparams format
 function queryParamFormat(word) {
   let formattedWord = word
@@ -76,14 +92,14 @@ function queryParamFormat(word) {
 function handleFilterChange() {
   if (brandNameInput.value || prodTypeInput.value) {
     //if value present, enabling buttons
+    console.log("filterAdded", filterAdded);
     filterButton.classList.remove("disabled");
     clearFilterButton.classList.remove("disabled");
-  } else if (!brandNameInput.value || !prodTypeInput.value || filterAdded) {
+  } else if (!brandNameInput.value && !prodTypeInput.value && !filterAdded) {
     //if value not present, disabling buttons
-    //getItems("", "");
+    console.log("filterAdded", filterAdded);
     filterButton.classList.add("disabled");
     clearFilterButton.classList.add("disabled");
-    //row.innerHTML = "";
   }
 }
 
