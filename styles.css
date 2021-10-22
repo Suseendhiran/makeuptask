@@ -81,6 +81,7 @@ body {
   margin-right: 8px;
   margin-top: 12px;
   cursor: pointer;
+  text-transform: capitalize;
 }
 .availabilities {
   cursor: pointer;
