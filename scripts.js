@@ -190,6 +190,8 @@ function handleSuccess(makeupProds) {
   spinner.style.display = "none"; //hiding spinner after successfull fetch
   brandNameInput.removeAttribute("disabled"); //enabling filter inputs once data sucessfully fetched
   prodTypeInput.removeAttribute("disabled");
+  availableBrands.removeAttribute("disabled");
+  availableProductsTypes.removeAttribute("disabled");
   console.log(makeupProds);
   let productsBrands = makeupProds.map((item) => item.brand);
   let productsTypes = makeupProds.map((item) =>
@@ -231,10 +233,11 @@ function handleSuccess(makeupProds) {
             }
             />
             <div class="details">
-                <div class="brandName"><span>Brand</span> : ${item.brand}</div>
+               
                 <div class="brandName"><span>Name</span> : ${item.name} ${
       item.product_type ? `(${item.product_type.split("_").join(" ")})` : ""
     }</div>
+                <div class="brandName"><span>Brand</span> : ${item.brand}</div>
                 <div><span>Price</span> : ${
                   item.price_sign ? item.price_sign : "$"
                 } ${item.price}</div>
@@ -254,6 +257,8 @@ async function getItems(brandName, prodType) {
   noItemsPara.style.display = "none"; // hiding no items found para while fetching
   brandNameInput.setAttribute("disabled", "true"); //disabling filter inputs while fetching data
   prodTypeInput.setAttribute("disabled", true);
+  availableBrands.setAttribute("disabled", true);
+  availableProductsTypes.setAttribute("disabled", true);
   console.log("");
   await fetch(
     `https://makeup-api.herokuapp.com/api/v1/products.json${
